@@ -1,0 +1,38 @@
+
+    <!doctype html>
+    <html lang="en">
+      <head>
+       <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 
+     Penerapan Content Security Policy (CSP):
+      Ini merupakan meta tag CSP yang memberi tahu browser sumber mana yang aman.
+      - 'default-src 'self'': Nantinya hanya mengizinkan sumber daya (script, style, dll.) 
+                              dimuat dari domain yang sama ('self').
+      - 'connect-src 'self' ...': Mengizinkan koneksi API (fetch/axios) ke 'self' 
+                                  DAN ke VITE_API_URL Anda (localhost dan vercel).
+      - 'style-src 'self' 'unsafe-inline'': Mengizinkan style inline (dibutuhkan 
+                                            oleh Tailwind/Vite).
+      - 'img-src 'self' data:': Izinkan gambar dari 'self' dan data URIs.
+    -->
+        <meta 
+        http-equiv="Content-Security-Policy" 
+        content="
+            default-src 'self'; 
+            connect-src 'self' http://localhost:3000 https://cs-7-kemjar-be.vercel.app; 
+            script-src 'self'; 
+            style-src 'self' 'unsafe-inline'; 
+            img-src 'self' data:;
+        ">
+        <!-- AKHIR UPDATE (PERBAIKAN #11) -->
+        
+       <title>CS7 Kemjar - Secure App</title>
+       </head>
+       <body>
+       <div id="root"></div>
+       <script type="module" src="/src/main.jsx"></script>
+      </body>
+    </html>
+
