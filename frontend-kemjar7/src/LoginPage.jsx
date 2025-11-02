@@ -1,6 +1,9 @@
+// frontend-kemjar7/src/LoginPage.jsx
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "./actions/auth";
+// UPDATE: Ganti import 'loginUser' dengan 'login' dan 'register'
+import { login, register } from "./actions/auth";
 import netlabLogo from "./assets/netlab2.svg";
 
 function LoginPage() {
@@ -8,6 +11,11 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
+
+  // UPDATE: State untuk ganti mode dan field register
+  const [isLoginMode, setIsLoginMode] = useState(true);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
   const navigate = useNavigate();
 
@@ -17,19 +25,34 @@ function LoginPage() {
     setMessage({ text: "", type: "" });
 
     try {
-      const data = await loginUser(username, password);
-      const overFlag = data.user.length > 1 ? 1 : 0;
+      // UPDATE: Logika login/register yang aman (bukan 'overFlag')
+      let data;
+      if (isLoginMode) {
+        // Memanggil endpoint login aman: /users/login
+        data = await login(username, password);
+      } else {
+        // Memanggil endpoint register aman: /users
+        data = await register(name, username, email, password);
+      }
 
-      if (overFlag === 0) {
-        localStorage.setItem("userData", JSON.stringify(data.user[0]));
+      if (data.user) {
+        // SUKSES LOGIN
+        localStorage.setItem("userData", JSON.stringify(data.user));
         navigate("/home");
       } else {
-        setMessage({
-          text: "Hello: " + data.user.map((u) => u.name).join(", "),
-          type: "success",
-        });
+        // SUKSES REGISTER
+        setMessage({ text: "Registrasi berhasil! Silakan login.", type: "success" });
+        setIsLoginMode(true); // Balik ke mode login
+        // Kosongkan form
+        setName("");
+        setEmail("");
+        setUsername("");
+        setPassword("");
       }
+      // AKHIR UPDATE
+
     } catch (err) {
+      // Pesan error aman dari backend (misal: "Username atau password salah")
       setMessage({ text: err.message, type: "error" });
     } finally {
       setIsLoading(false);
@@ -38,11 +61,9 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-black-10 text-gray-100">
-      {/* Left side - Branding / Info */}
+      {/* Kiri - Branding (Kode Anda dipertahankan) */}
       <div className="flex flex-col justify-center items-center md:w-1/2 bg-black-15 p-10 text-center relative overflow-hidden">
-        {/* Optional subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-black-10 to-black-20 opacity-40 pointer-events-none" />
-
         <div className="relative z-10 flex flex-col items-center">
           <img
             src={netlabLogo}
@@ -68,31 +89,65 @@ function LoginPage() {
         </div>
       </div>
 
-
-      {/* Right side - Login Form */}
+      {/* Kanan - Form (Logika Diperbarui) */}
       <div className="flex flex-col justify-center items-center md:w-1/2 bg-black-25 p-8 md:p-16 rounded-t-2xl md:rounded-none shadow-2xl">
         <div className="w-full max-w-md space-y-8">
           <h2 className="text-3xl font-bold text-center text-white">
-            Sign in
+            {/* UPDATE: Judul dinamis */}
+            {isLoginMode ? "Sign in" : "Create Account"}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* UPDATE: Field tambahan untuk Register (untuk Pengujian 3) */}
+            {!isLoginMode && (
+              <>
+                <div>
+                  <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-300">
+                    Name
+                  </label>
+                  <input
+                    type="text" id="name" value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    // UPDATE (PERBAIKAN #9): Validasi Sisi Klien
+                    required
+                    minLength="3" // Sesuai Pengujian 3 (nama: tes)
+                    maxLength="100"
+                    // AKHIR UPDATE (PERBAIKAN #9)
+                    className="w-full px-4 py-2 bg-black-30 border border-black rounded-md text-gray-100 placeholder-white placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent disabled:opacity-50"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-300">
+                    Email
+                  </label>
+                  <input
+                    type="email" id="email" value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    // UPDATE (PERBAIKAN #9): Validasi Sisi Klien
+                    required
+                    maxLength="100"
+                    // AKHIR UPDATE (PERBAIKAN #9)
+                    className="w-full px-4 py-2 bg-black-30 border border-black rounded-md text-gray-100 placeholder-white placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent disabled:opacity-50"
+                    placeholder="Enter your email"
+                  />
+                </div>
+              </>
+            )}
+            {/* AKHIR UPDATE */}
+
             <div>
-              <label
-                htmlFor="username"
-                className="block mb-2 text-sm font-medium text-gray-300"
-              >
+              <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-300">
                 Username
               </label>
               <input
-                type="text"
-                id="username"
-                value={username}
+                type="text" id="username" value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                // Validasi Sisi Klien:
+                // UPDATE (PERBAIKAN #9): Validasi Sisi Klien
                 required
-                minLength="3"
-                maxLength="100"
+                minLength="4" // Sesuai Pengujian 3 (username: tes -> gagal)
+                maxLength="50"
+                // AKHIR UPDATE (PERBAIKAN #9)
                 disabled={isLoading}
                 className="w-full px-4 py-2 bg-black-30 border border-black rounded-md text-gray-100 placeholder-white placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent disabled:opacity-50"
                 placeholder="Enter username"
@@ -100,21 +155,17 @@ function LoginPage() {
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block mb-2 text-sm font-medium text-gray-300"
-              >
+              <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-300">
                 Password
               </label>
               <input
-                type="password"
-                id="password"
-                value={password}
+                type="password" id="password" value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                // Validasi Sisi Klien:
+                // UPDATE (PERBAIKAN #9): Validasi Sisi Klien
                 required
-                minLength="4"
-                maxLength="50"
+                minLength="8" // Sesuai Pengujian 3 (password: 123 -> gagal)
+                maxLength="100"
+                // AKHIR UPDATE (PERBAIKAN #9)
                 disabled={isLoading}
                 className="w-full px-4 py-2 bg-black-30 border border-black rounded-md text-gray-100 placeholder-white placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent disabled:opacity-50"
                 placeholder="Enter password"
@@ -128,50 +179,44 @@ function LoginPage() {
             >
               {isLoading ? (
                 <>
-                  <svg
-                    className="w-5 h-5 animate-spin text-black"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                    ></path>
+                  <svg className="w-5 h-5 animate-spin text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                   </svg>
-                  <span>Logging in</span>
+                  {/* UPDATE: Teks tombol dinamis */}
+                  <span>{isLoginMode ? "Logging in..." : "Creating account..."}</span>
                 </>
               ) : (
-                "Login"
+                isLoginMode ? "Login" : "Register"
               )}
             </button>
           </form>
 
+          {/* UPDATE: Tombol untuk ganti mode */}
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => setIsLoginMode(!isLoginMode)}
+              className="text-sm text-gray-400 hover:text-white hover:underline"
+            >
+              {isLoginMode
+                ? "Don't have an account? Register"
+                : "Already have an account? Login"}
+            </button>
+          </div>
+          {/* AKHIR UPDATE */}
+
           {message.text && (
             <div className="mt-6 text-center">
               <p
-                className={`text-sm ${message.type === "error"
-                  ? "text-red-400"
-                  : "text-green-400"
-                  }`}
+                className={`text-sm ${
+                  message.type === "error"
+                    ? "text-red-400"
+                    : "text-green-400"
+                }`}
               >
-                { // Menampilkan pesan dari state 'message'.
-                  
-                }
+                {/* UPDATE (PERBAIKAN #10): Sanitasi XSS (otomatis oleh React) */}
                 {message.text}
-                {
-
-                  // Jika pesan bertipe 'success', tambahkan instruksi tambahan.
-                }
               </p>
             </div>
           )}
