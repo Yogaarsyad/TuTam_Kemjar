@@ -1,4 +1,4 @@
-// app.js
+// app.js (Versi FINAL & AMAN)
 
 require("dotenv").config();
 const cors = require("cors");
@@ -20,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet()); // Perbaikan Poin #11: Menerapkan header keamanan
+
 // Routes
 app.use("/users", userRoutes);
 app.use("/flags", flagRoutes);
@@ -33,9 +34,9 @@ app.get("/", (req, res) => {
 app.listen(port, async () => {
   console.log(`✅ Server running at http://localhost:${port}`);
   try {
-    await testConnection(); 
-    console.log("✅ Connected to database!");
+    await testConnection(); 
+    console.log("✅ Connected to database!");
   } catch (err) {
-    console.error("Database connection failed:", err.message);
+    console.error("Database connection failed:", err.message);
   }
 });

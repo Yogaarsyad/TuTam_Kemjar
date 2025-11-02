@@ -1,8 +1,6 @@
-// frontend-kemjar7/src/LoginPage.jsx
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// UPDATE: Ganti import 'loginUser' dengan 'login' dan 'register'
+
 import { login, register } from "./actions/auth";
 import netlabLogo from "./assets/netlab2.svg";
 
@@ -12,7 +10,7 @@ function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
 
-  // UPDATE: State untuk ganti mode dan field register
+
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -25,34 +23,34 @@ function LoginPage() {
     setMessage({ text: "", type: "" });
 
     try {
-      // UPDATE: Logika login/register yang aman (bukan 'overFlag')
+
       let data;
       if (isLoginMode) {
-        // Memanggil endpoint login aman: /users/login
+
         data = await login(username, password);
       } else {
-        // Memanggil endpoint register aman: /users
+
         data = await register(name, username, email, password);
       }
 
       if (data.user) {
-        // SUKSES LOGIN
+
         localStorage.setItem("userData", JSON.stringify(data.user));
         navigate("/home");
       } else {
-        // SUKSES REGISTER
+
         setMessage({ text: "Registrasi berhasil! Silakan login.", type: "success" });
-        setIsLoginMode(true); // Balik ke mode login
-        // Kosongkan form
+        setIsLoginMode(true); 
+
         setName("");
         setEmail("");
         setUsername("");
         setPassword("");
       }
-      // AKHIR UPDATE
+ 
 
     } catch (err) {
-      // Pesan error aman dari backend (misal: "Username atau password salah")
+
       setMessage({ text: err.message, type: "error" });
     } finally {
       setIsLoading(false);
@@ -61,7 +59,7 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-black-10 text-gray-100">
-      {/* Kiri - Branding (Kode Anda dipertahankan) */}
+      {  }
       <div className="flex flex-col justify-center items-center md:w-1/2 bg-black-15 p-10 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-black-10 to-black-20 opacity-40 pointer-events-none" />
         <div className="relative z-10 flex flex-col items-center">
@@ -89,16 +87,24 @@ function LoginPage() {
         </div>
       </div>
 
-      {/* Kanan - Form (Logika Diperbarui) */}
+      {
+
+
+      }
       <div className="flex flex-col justify-center items-center md:w-1/2 bg-black-25 p-8 md:p-16 rounded-t-2xl md:rounded-none shadow-2xl">
         <div className="w-full max-w-md space-y-8">
           <h2 className="text-3xl font-bold text-center text-white">
-            {/* UPDATE: Judul dinamis */}
+            {
+
+
+            }
             {isLoginMode ? "Sign in" : "Create Account"}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* UPDATE: Field tambahan untuk Register (untuk Pengujian 3) */}
+            {
+
+            }
             {!isLoginMode && (
               <>
                 <div>
@@ -108,11 +114,11 @@ function LoginPage() {
                   <input
                     type="text" id="name" value={name}
                     onChange={(e) => setName(e.target.value)}
-                    // UPDATE (PERBAIKAN #9): Validasi Sisi Klien
+
                     required
-                    minLength="3" // Sesuai Pengujian 3 (nama: tes)
+                    minLength="3" 
                     maxLength="100"
-                    // AKHIR UPDATE (PERBAIKAN #9)
+      
                     className="w-full px-4 py-2 bg-black-30 border border-black rounded-md text-gray-100 placeholder-white placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent disabled:opacity-50"
                     placeholder="Enter your full name"
                   />
@@ -124,17 +130,20 @@ function LoginPage() {
                   <input
                     type="email" id="email" value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    // UPDATE (PERBAIKAN #9): Validasi Sisi Klien
+              
                     required
                     maxLength="100"
-                    // AKHIR UPDATE (PERBAIKAN #9)
+             
                     className="w-full px-4 py-2 bg-black-30 border border-black rounded-md text-gray-100 placeholder-white placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent disabled:opacity-50"
                     placeholder="Enter your email"
                   />
                 </div>
               </>
             )}
-            {/* AKHIR UPDATE */}
+            {
+
+
+            }
 
             <div>
               <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-300">
@@ -143,11 +152,11 @@ function LoginPage() {
               <input
                 type="text" id="username" value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                // UPDATE (PERBAIKAN #9): Validasi Sisi Klien
+          
                 required
-                minLength="4" // Sesuai Pengujian 3 (username: tes -> gagal)
+                minLength="4" 
                 maxLength="50"
-                // AKHIR UPDATE (PERBAIKAN #9)
+               
                 disabled={isLoading}
                 className="w-full px-4 py-2 bg-black-30 border border-black rounded-md text-gray-100 placeholder-white placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent disabled:opacity-50"
                 placeholder="Enter username"
@@ -161,11 +170,11 @@ function LoginPage() {
               <input
                 type="password" id="password" value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                // UPDATE (PERBAIKAN #9): Validasi Sisi Klien
+               
                 required
-                minLength="8" // Sesuai Pengujian 3 (password: 123 -> gagal)
+                minLength="8" 
                 maxLength="100"
-                // AKHIR UPDATE (PERBAIKAN #9)
+   
                 disabled={isLoading}
                 className="w-full px-4 py-2 bg-black-30 border border-black rounded-md text-gray-100 placeholder-white placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent disabled:opacity-50"
                 placeholder="Enter password"
@@ -183,7 +192,10 @@ function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                   </svg>
-                  {/* UPDATE: Teks tombol dinamis */}
+                  {
+
+
+                  }
                   <span>{isLoginMode ? "Logging in..." : "Creating account..."}</span>
                 </>
               ) : (
@@ -192,7 +204,9 @@ function LoginPage() {
             </button>
           </form>
 
-          {/* UPDATE: Tombol untuk ganti mode */}
+          {
+
+          }
           <div className="text-center">
             <button
               type="button"
@@ -204,7 +218,10 @@ function LoginPage() {
                 : "Already have an account? Login"}
             </button>
           </div>
-          {/* AKHIR UPDATE */}
+          {
+
+
+          }
 
           {message.text && (
             <div className="mt-6 text-center">
@@ -215,7 +232,10 @@ function LoginPage() {
                     : "text-green-400"
                 }`}
               >
-                {/* UPDATE (PERBAIKAN #10): Sanitasi XSS (otomatis oleh React) */}
+                {
+
+                  
+                }
                 {message.text}
               </p>
             </div>

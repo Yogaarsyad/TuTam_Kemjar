@@ -11,7 +11,7 @@ function ValidatePage() {
   const [message, setMessage] = useState({ text: "", type: "" });
 
   useEffect(() => {
-    // Ambil user_id dari localStorage
+
     try {
       const storedUser = JSON.parse(localStorage.getItem("userData"));
       if (storedUser?.id) {
@@ -80,8 +80,8 @@ function ValidatePage() {
         <form onSubmit={handleSubmit} className="space-y-6">
         <div>
         <p>
-              { // Sanitasi Output (Mencegah XSS)}
-              // React secara otomatis meng-escape variabel {userName} dan {userId}.
+              { 
+              
               }
              </p>
             <p className="mb-5">
@@ -96,8 +96,7 @@ function ValidatePage() {
               value={flag}
 
               onChange={(e) => setFlag(e.target.value)}
-                 // Validasi Sisi Klien (HTML5)
-                // Menambahkan 'maxLength' guna untuk membatasi panjang input.
+                
               required
               maxLength="100"
 
@@ -138,7 +137,7 @@ function ValidatePage() {
                   <span>Checking Flag..</span>
                 </>
               ) : (
-                "Submit Flag" // UPDATE: Mengganti teks tombol "Login" menjadi "Submit Flag"
+                "Submit Flag" 
               )}
             </button>
 
@@ -157,13 +156,13 @@ function ValidatePage() {
               className={`text-sm whitespace-pre-line ${message.type === "error" ? "text-red-400" : "text-green-400"
                 }`}
             >
-                {/* UPDATE (PERBAIKAN #10): Sanitasi Output (Mencegah XSS)
-                {message.text} di-render sebagai teks oleh React, 
-                bukan sebagai HTML. Ini adalah implementasi dari Poin #10.
-              */}
+                {
+              }
 
               {message.text}
-                {/* AKHIR UPDATE (PERBAIKAN #10) */}
+                {
+                
+                }
             </p>
           </div>
         )}

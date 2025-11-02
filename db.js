@@ -5,7 +5,7 @@ let NeonPool, neon;
 try {
   ({ Pool: NeonPool, neon } = require('@neondatabase/serverless'));
 } catch (e) {
-  // neon driver may not be installed in local dev; that's fine
+
   NeonPool = null;
   neon = null;
 }
@@ -25,9 +25,6 @@ const connectionString = buildConnectionString();
 let pool;
 let sql = null;
 
-// Logika library 'postgres' (`sql`) hanya akan berfungsi jika
-// Anda menggunakannya. Jika Anda hanya menggunakan `pool`, 
-// maka 'sql' akan 'null', yang tidak masalah.
 if (process.env.NODE_ENV === 'production' && NeonPool && neon) {
   console.log("Running in production, using Neon serverless driver.");
   pool = new NeonPool({ connectionString });
@@ -35,11 +32,7 @@ if (process.env.NODE_ENV === 'production' && NeonPool && neon) {
 } else {
   console.log("✅ Running locally, using standard `pg` driver.");
   pool = new PgPool({ connectionString });
-  // Inisialisasi 'sql' untuk lokal jika Anda menggunakannya
-  // Jika tidak, Anda bisa menghapus 'sql' jika hanya 'pool' yang dipakai
-  // Untuk kompatibilitas dengan 'models/userModels.js', kita perlu 'sql'.
-  // Mari kita import library 'postgres'
-  try {
+
     const postgres = require('postgres');
     sql = postgres(connectionString);
   } catch (e) {
@@ -48,14 +41,13 @@ if (process.env.NODE_ENV === 'production' && NeonPool && neon) {
   }
 }
 
-// Exported helper to test DB connectivity (called from app.js).
 async function testConnection() {
   if (!pool) throw new Error("Database pool is not initialized");
   const client = await pool.connect();
   try {
-    // simple liveness check
+
     await client.query('SELECT 1');
-    // (Log sukses sekarang ditangani di app.js setelah koneksi)
+
   } finally {
     client.release();
   }
